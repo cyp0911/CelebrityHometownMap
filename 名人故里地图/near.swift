@@ -17,6 +17,318 @@ class near: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
     
     //values
     
+    var showbutton = false
+    var cnma = true
+    let popover = Popover()
+    
+    @IBAction func share(sender: AnyObject) {
+        if(!NSUserDefaults.standardUserDefaults().boolForKey("showbutton?")){
+        }else{
+            showbutton = true
+            
+        }
+        
+        
+        
+        let startPoint = CGPoint(x: self.view.frame.width - 40, y: 55)
+        let aView = UIView(frame: CGRect(x: 0, y: 0, width: 230, height: 160))
+        popover.show(aView, point: startPoint)
+        
+        let wbbtn = UIButton()
+        wbbtn.setImage(UIImage(named: "weiboicon.png"), forState: .Normal)
+        wbbtn.frame = CGRectMake(20, 20, 50, 50)
+        wbbtn.addTarget(self, action: Selector("toweibo:"), forControlEvents: .TouchUpInside)
+        aView.addSubview(wbbtn)
+        
+        
+        if(showbutton == true){
+            let frbtn = UIButton()
+            frbtn.setImage(UIImage(named: "friendicon.png"), forState: .Normal)
+            frbtn.frame = CGRectMake(90, 20, 50, 50)
+            frbtn.addTarget(self, action: Selector("tofriend:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(frbtn)
+            
+            let wxbtn = UIButton()
+            wxbtn.setImage(UIImage(named: "weixinicon.png"), forState: .Normal)
+            wxbtn.frame = CGRectMake(160, 20, 50, 50)
+            wxbtn.addTarget(self, action: Selector("toweixin:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(wxbtn)
+        }
+        
+        if(cnma == true){
+            let fbbtn = UIButton()
+            fbbtn.setImage(UIImage(named: "facebookicon.png"), forState: .Normal)
+            fbbtn.frame = CGRectMake(20, 90, 50, 50)
+            fbbtn.addTarget(self, action: Selector("tofacebook:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(fbbtn)
+            
+            
+            let twbtn = UIButton()
+            twbtn.setImage(UIImage(named: "twittericon.png"), forState: .Normal)
+            twbtn.frame = CGRectMake(90, 90, 50, 50)
+            twbtn.addTarget(self, action: Selector("totwitter:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(twbtn)
+        }
+        
+    }
+    
+    var provhere = ""
+    var numhere = ""
+    
+    
+    func toweibo(sender: AnyObject) {
+        
+        popover.dismiss()
+        let shareController: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeSinaWeibo)
+        shareController.setInitialText("离我最近的名人是：\(nameofhero), 籍贯: \(locofhero), \(disofhero). 想看看有什么名人在附近出生？IOS APP Store搜索：名人籍贯地图~")
+        
+        let imagenow = screenshot()
+        
+        shareController.addImage(imagenow)
+        
+        shareController.addURL(NSURL(string: "https://itunes.apple.com/cn/app/ming-ren-ji-guan-de-tu/id1084855455"))
+        
+        self.presentViewController(shareController, animated: true, completion: nil)
+        
+        
+    }
+    
+    
+    func tofacebook(sender: AnyObject) {
+        popover.dismiss()
+        let shareController: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+        shareController.setInitialText("离我最近的名人是：\(nameofhero), 籍贯: \(locofhero), \(disofhero). 想看看有什么名人在附近出生？IOS APP Store搜索：名人籍贯地图~")
+        
+        let imagenow = screenshot()
+        
+        shareController.addImage(imagenow)
+        
+        shareController.addURL(NSURL(string: "https://itunes.apple.com/cn/app/ming-ren-ji-guan-de-tu/id1084855455"))
+        self.presentViewController(shareController, animated: true, completion: nil)
+        
+    }
+    
+    
+    func totwitter(sender: AnyObject) {
+        popover.dismiss()
+        let shareController: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+        shareController.setInitialText("离我最近的名人是：\(nameofhero), 籍贯: \(locofhero), \(disofhero). 想看看有什么名人在附近出生？IOS APP Store搜索：名人籍贯地图~")
+        
+        
+        let imagenow = screenshot()
+        
+        shareController.addImage(imagenow)
+        shareController.addURL(NSURL(string: "https://itunes.apple.com/cn/app/ming-ren-ji-guan-de-tu/id1084855455"))
+        
+        self.presentViewController(shareController, animated: true, completion: nil)
+        
+        
+    }
+    
+    
+    func sendText(text:String, inScene: WXScene)->Bool{
+        let req=SendMessageToWXReq()
+        req.text=text
+        req.bText=true
+        req.scene=Int32(inScene.rawValue)
+        return WXApi.sendReq(req)
+    }
+    
+    
+    ///分享图片
+    func sendImage(image:UIImage, inScene:WXScene)->Bool{
+        let ext=WXImageObject()
+        ext.imageData=UIImagePNGRepresentation(image)
+        
+        let message=WXMediaMessage()
+        message.title="点击下载名人籍贯地图~"
+        message.description="离我最近的名人是：\(nameofhero), 籍贯: \(locofhero), \(disofhero). 想看看有什么名人在附近出生？IOS APP Store搜索：名人籍贯地图~"
+        message.mediaObject=ext
+        message.mediaTagName="MyPic"
+        //生成缩略图
+        UIGraphicsBeginImageContext(CGSize(width: 100, height: 100))
+        image.drawInRect(CGRectMake(0, 0, 100, 100))
+        let thumbImage=UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        message.thumbData=UIImagePNGRepresentation(thumbImage)
+        
+        let req=SendMessageToWXReq()
+        req.text="各行各业名人籍贯全收录，地图展示，人物介绍，来找找自己家乡的名人吧，APP store搜索：名人籍贯地图"
+        req.message=message
+        req.bText=false
+        req.scene=Int32(inScene.rawValue)
+        return WXApi.sendReq(req)
+    }
+    
+    func sendlink(image:UIImage, insCene:WXScene) ->Bool{
+        print("linkrun")
+        let message=WXMediaMessage()
+        message.title="点击下载名人籍贯地图～"
+        message.description="离我最近的名人是：\(nameofhero), 籍贯: \(locofhero), \(disofhero). 想看看有什么名人在附近出生？IOS APP Store搜索：名人籍贯地图~"
+        message.mediaTagName="mingrne"
+        //生成缩略图
+        UIGraphicsBeginImageContext(CGSize(width: 100, height: 100))
+        image.drawInRect(CGRectMake(0, 0, 100, 100))
+        let thumbImage=UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        message.thumbData=UIImagePNGRepresentation(thumbImage)
+        
+        var ext =  WXWebpageObject()
+        ext.webpageUrl = "https://itunes.apple.com/cn/app/ming-ren-ji-guan-de-tu/id1084855455"
+        message.mediaObject = ext
+        
+        var req =  SendMessageToWXReq()
+        req.bText = false
+        req.message = message
+        req.scene=Int32(insCene.rawValue)
+        
+        return WXApi.sendReq(req)
+    }
+    
+    
+    func tofriend(sender: AnyObject) {
+        popover.dismiss()
+        print("aaaa")
+        //sendText("做个实验～", inScene: WXSceneTimeline)
+        //sendImage(biggraph.image!, inScene: WXSceneTimeline) //分享图片到朋友圈，假设项目中已经添加了一张名曰MyImage.png的大图片作为分享图片
+        sendlink(UIImage(named: "iTunesArtwork1024.png")!, insCene: WXSceneTimeline )
+        
+        
+    }
+    
+    func toweixin(sender: AnyObject) {
+        popover.dismiss()
+        //sendText("做个实验～", inScene: WXSceneTimeline)
+        sendlink(UIImage(named: "iTunesArtwork1024.png")!, insCene: WXSceneSession )
+    }
+    
+    
+    func onResp(resp: BaseResp!) {
+        //如果第三方程序向微信发送了sendReq的请求，那么onResp会被回调。sendReq请求调用后，会切到微信终端程序界面。
+        if resp.isKindOfClass(SendMessageToWXResp){//确保是对我们分享操作的回调
+            if resp.errCode == WXSuccess.rawValue{//分享成功
+                NSLog("分享成功")
+            }else{//分享失败
+                NSLog("分享失败，错误码：%d, 错误描述：%@", resp.errCode, resp.errStr)
+            }
+        }
+    }
+
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    func displayAlert(title: String, message: String) {
+        
+        var alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addAction((UIAlertAction(title: "好的", style: .Default, handler: { (action) -> Void in
+            
+            self.dismissViewControllerAnimated(true, completion: nil)
+            
+        })))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+        
+        
+    }
+
+    @IBOutlet weak var likebutton: UIButton!
+    
+    @IBAction func like(sender: AnyObject) {
+        
+        if(!NSUserDefaults.standardUserDefaults().boolForKey("liked?")){
+            let query1 = PFQuery(className:"people")
+            
+            query1.whereKey("config", notEqualTo: 3).whereKey("name", equalTo:"\(titlename.text!)")
+            query1.getFirstObjectInBackgroundWithBlock {
+                (object: PFObject?, error: NSError?) -> Void in
+                if error != nil || object == nil {
+                    print("The getFirstObject request failed.")
+                } else {
+                    // The find succeeded.
+                    let likenow = (object!["like"] as! Int) + 1
+                    
+                    object!["like"] = likenow
+
+                    object!.saveInBackgroundWithBlock {
+                        (success: Bool, error: NSError?) -> Void in
+                        if (success) {
+                            // The object has been saved.
+                            self.displayAlert("点赞成功", message: "老乡\(object!["name"])目前获赞\(object!["like"])次,叫更多朋友来为家乡名人呐喊助威吧")
+                            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "liked?")
+                            self.likebutton.setImage(UIImage(named: "dislike.png"), forState: UIControlState.Normal)
+                        } else {
+                            // There was a problem, check error.description
+                            
+
+                        }
+                    }
+                    
+
+                }
+            }
+            
+            
+            
+
+        }else{
+            let query1 = PFQuery(className:"people")
+            query1.whereKey("config", notEqualTo: 3).whereKey("name", equalTo:"\(titlename.text!)")
+            query1.getFirstObjectInBackgroundWithBlock {
+                (object: PFObject?, error: NSError?) -> Void in
+                if error != nil || object == nil {
+                    print("The getFirstObject request failed.")
+                } else {
+                    // The find succeeded.
+                    let likenow = (object!["like"] as! Int) - 1
+                    
+                    object!["like"] = likenow
+                    
+                    object!.saveInBackgroundWithBlock {
+                        (success: Bool, error: NSError?) -> Void in
+                        if (success) {
+                            // The object has been saved.
+                            self.displayAlert("取消点赞", message: "老乡\(object!["name"])表示很伤心~")
+                            NSUserDefaults.standardUserDefaults().setBool(false, forKey: "liked?")
+                            self.likebutton.setImage(UIImage(named: "thumb.png"), forState: UIControlState.Normal)
+                        } else {
+                            // There was a problem, check error.description
+                            
+                            
+                        }
+                    }
+                    
+                    
+                
+                }
+            }
+
+            
+            
+
+        }
+        
+        
+        
+        
+    }
+
+    
+    @IBOutlet weak var titlename: UILabel!
+    
     var userlong = 0.1
     var userlat = 0.1
     
@@ -34,30 +346,120 @@ class near: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
     var indexofhero: String!
     
     
-    @IBAction func shareloc(sender: AnyObject) {
-        let shareController: SLComposeViewController = SLComposeViewController(forServiceType: SLServiceTypeSinaWeibo)
-        shareController.setInitialText("离我最近的三国英雄是：\(nameofhero), 籍贯: \(locofhero), \(disofhero). 想找离自己最近的三国英雄？ 当年收藏过的奇多三国卡, APP Store 搜索: 奇多三国卡－电子卡册")
-        
-        let imagenow = screenshot()
-        
-        shareController.addImage(imagenow)
-        
-        shareController.addURL(NSURL(string: "https://appsto.re/cn/k_Mqab.i"))
-        self.presentViewController(shareController, animated: true, completion: nil)
-        
-        
-    }
     
     
+    @IBOutlet weak var showdis: UILabel!
     
     var i = 1
 
     
     
+    @IBAction func sharebtn(sender: AnyObject) {
+        if(!NSUserDefaults.standardUserDefaults().boolForKey("showbutton?")){
+        }else{
+            showbutton = true
+            
+        }
+        
+        
+        
+        let startPoint = CGPoint(x: self.view.frame.width - 40, y: 55)
+        let aView = UIView(frame: CGRect(x: 0, y: 0, width: 230, height: 160))
+        popover.show(aView, point: startPoint)
+        
+        let wbbtn = UIButton()
+        wbbtn.setImage(UIImage(named: "weiboicon.png"), forState: .Normal)
+        wbbtn.frame = CGRectMake(20, 20, 50, 50)
+        wbbtn.addTarget(self, action: Selector("toweibo:"), forControlEvents: .TouchUpInside)
+        aView.addSubview(wbbtn)
+        
+        
+        if(showbutton == true){
+            let frbtn = UIButton()
+            frbtn.setImage(UIImage(named: "friendicon.png"), forState: .Normal)
+            frbtn.frame = CGRectMake(90, 20, 50, 50)
+            frbtn.addTarget(self, action: Selector("tofriend:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(frbtn)
+            
+            let wxbtn = UIButton()
+            wxbtn.setImage(UIImage(named: "weixinicon.png"), forState: .Normal)
+            wxbtn.frame = CGRectMake(160, 20, 50, 50)
+            wxbtn.addTarget(self, action: Selector("toweixin:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(wxbtn)
+        }
+        
+        if(cnma == true){
+            let fbbtn = UIButton()
+            fbbtn.setImage(UIImage(named: "facebookicon.png"), forState: .Normal)
+            fbbtn.frame = CGRectMake(20, 90, 50, 50)
+            fbbtn.addTarget(self, action: Selector("tofacebook:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(fbbtn)
+            
+            
+            let twbtn = UIButton()
+            twbtn.setImage(UIImage(named: "twittericon.png"), forState: .Normal)
+            twbtn.frame = CGRectMake(90, 90, 50, 50)
+            twbtn.addTarget(self, action: Selector("totwitter:"), forControlEvents: .TouchUpInside)
+            aView.addSubview(twbtn)
+        }
+
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController!.navigationBar.barTintColor = UIColor.redColor()
+
+        if(!NSUserDefaults.standardUserDefaults().boolForKey("showbutton?")){
+            var showbtn = PFQuery(className:"swift")
+            showbtn.whereKey("function", equalTo:"showbtn")
+            showbtn.findObjectsInBackgroundWithBlock {
+                (objects: [PFObject]?, error: NSError?) -> Void in
+                
+                if error == nil {
+                    // The find succeeded.
+                    print("Successfully retrieved \(objects!.count) scores.")
+                    // Do something with the found objects
+                    if let objects = objects {
+                        for object in objects {
+                            if (object["show"] as! Int == 0){
+                                self.showbutton = false
+                            }else{
+                                self.showbutton = true
+                                NSUserDefaults.standardUserDefaults().setBool(true, forKey: "showbutton?")
+                            }
+                        }
+                    }
+                } else {
+                    // Log details of the failure
+                    print("Error: \(error!) \(error!.userInfo)")
+                }
+            }
+            
+        }
+
+        
+        
+        if(!NSUserDefaults.standardUserDefaults().boolForKey("liked?")){
+            likebutton.setImage(UIImage(named: "thumb.png"), forState: UIControlState.Normal)
+
+        }else{
+            likebutton.setImage(UIImage(named: "dislike.png"), forState: UIControlState.Normal)
+
+        }
+        
+        
+        
         navigationController!.navigationBar.tintColor = UIColor.whiteColor()
         
         
@@ -69,13 +471,13 @@ class near: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
         
         
         
+        
         PFGeoPoint.geoPointForCurrentLocationInBackground {
             (geoPoint: PFGeoPoint?, error: NSError?) -> Void in
             if error == nil {
                 let query = PFQuery(className:"people")
-                query.whereKey("geopoint", nearGeoPoint:geoPoint!)
-                query.limit = 3
-                self.text.text = "离您最近的3位名人：\n"
+                query.whereKey("config", notEqualTo: 3).whereKey("geopoint", nearGeoPoint:geoPoint!)
+                query.limit = 1
                 query.findObjectsInBackgroundWithBlock({ (objects:[PFObject]?, error) -> Void in
                     let place = objects
                     for object in place! {
@@ -108,8 +510,14 @@ class near: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
                         let distances = userloc.distanceFromLocation(loc)
 //                        self.distance.text = NSString(format: "距离您 %.2f 公里", (distances / 1000)) as String
                         self.disofhero = NSString(format: "距离 %.2f 公里", (distances / 1000)) as String
-                        self.nameofhero = "\(hero["name"] as! String) 字\(hero["word"] as! String)"
+                        self.nameofhero = "\(hero["name"] as! String) \(hero["word"] as! String)"
+                        if(hero["oldlocname"] != nil){
                         self.locofhero = "古:\(hero["oldlocname"] as! String), 现:\(hero["newlocname"] as! String)"
+                        }else{
+                            self.locofhero = "\(hero["newlocname"] as! String)"
+                        }
+                        
+                        
                         
 //                        self.numofhero = hero["num"] as! Int
 //                        
@@ -130,20 +538,23 @@ class near: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
                         
                         annotation.coordinate = coordinate
                         
-                        annotation.title = "\(hero["name"] as! String) 字\(hero["word"] as! String)  故里"
-                        annotation.subtitle = "古:\(hero["oldlocname"] as! String), 现:\(hero["newlocname"] as! String)"
+                        annotation.title = "\(hero["name"] as! String) \(hero["word"] as! String)"
+                        self.titlename.text = "\(hero["name"] as! String)"
+                        
+                    
+                        annotation.subtitle = self.locofhero
                         self.mmap.addAnnotation(annotation)
                         
-                        
                         self.mmap.setRegion(region, animated: true)
-                        //self.text.font = UIFont (name: "MFYueHei_Noncommercial-Regular", size: 30)
                         
-//                        self.text.font = UIFont(name: "MF YueHei (Noncommercial)", size: 30)
+                        self.showdis.text = "\(self.disofhero)"
 
-                        self.text.text = self.text.text + "\(self.i).\t\(hero["name"] as! String)\t\t字\(hero["word"] as! String)\t\(self.disofhero).\n"
+                        self.text.text = "\(hero["word"] as! String), \(hero["class"] as! String)人物\n"
+                        if(hero["comment"] != nil){
+                            self.text.text = self.text.text + "\(hero["comment"])"
+                        }
 //                        self.text.font = UIFont (name: "CTXingKaiSJ", size: 30)
                
-                        self.i++
                     }
                     
                 })
@@ -155,8 +566,10 @@ class near: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
         }
         
         
-        // User's location
-        // Create a query for places
+        
+        //save image
+
+        
         
         
         
@@ -183,7 +596,6 @@ class near: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
         }
         
         view?.leftCalloutAccessoryView = nil
-        view?.rightCalloutAccessoryView = UIButton(type: UIButtonType.DetailDisclosure)
         //swift 1.2
         //view?.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as UIButton
         

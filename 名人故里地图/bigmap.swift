@@ -18,6 +18,12 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
     var userlong = 0.1
     var userlat = 0.1
     
+    var receivedCellIndex = 0
+    
+    
+    
+    //    var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    
     
     @IBOutlet weak var mmap: MKMapView!
     
@@ -44,8 +50,37 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
             view!.annotation = annotation
         }
         
-        view?.leftCalloutAccessoryView = nil
-
+        
+        //    if(picdic["\(annotation.title!!)"] != nil){
+        //        let imageView = UIImageView(frame: CGRectMake(0, 0, 25, 60))
+        //
+        //        let hold = picdic["\(annotation.title!!)"]! as String
+        //        if hold != "nil"{
+        //
+        //        //download url
+        //        let url = NSURL(string: "\(hold)")
+        //
+        //        if let url  = NSURL(string: "\(hold)"),
+        //            data = NSData(contentsOfURL: url)
+        //        {
+        //            imageView.image = UIImage(data: data)
+        //        }
+        //
+        //
+        ////        }else{
+        ////        let image = UIImage(named: "pin.png")
+        ////            imageView.image = image;
+        ////
+        ////        }
+        //
+        //        imageView.contentMode = UIViewContentMode.ScaleAspectFit
+        //
+        //
+        //
+        //        view?.leftCalloutAccessoryView = imageView
+        //        }
+        //        }
+        
         view?.rightCalloutAccessoryView = UIButton(type: UIButtonType.DetailDisclosure)
         
         
@@ -63,12 +98,12 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
             performSegueWithIdentifier("toziliao", sender: view)
         }
     }
-
+    
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "toziliao" )
         {
-            var ikinciEkran = segue.destinationViewController as! ziliao
+            let ikinciEkran = segue.destinationViewController as! ziliao
             
             ikinciEkran.baike = (((sender as? MKAnnotationView)!.annotation?.title)!)!
             
@@ -76,9 +111,32 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
         
     }
     
+    var picdic = [String: String]()
+    
+    var classlist = ["三国","古代英杰","娱乐","体坛","当代政治","科学","商界","文艺"]
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //
+        //        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 50, 50))
+        //        activityIndicator.center = self.view.center
+        //        activityIndicator.hidesWhenStopped = true
+        //        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        //        view.addSubview(activityIndicator)
+        //        activityIndicator.startAnimating()
+        //        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+        //
+        
+        SwiftSpinner.show("地图读取中，请稍等～")
+        
+        
+        
+        
+        print("receive\(receivedCellIndex)")
+        
+        self.title = "\(classlist[receivedCellIndex - 1])人物地图"
+
         
         
         //侧滑菜单
@@ -88,9 +146,9 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
             self.revealViewController().rearViewRevealWidth = 200
         }
-
         
-        navigationController!.navigationBar.barTintColor = UIColor.redColor()
+        
+        navigationController!.navigationBar.barTintColor = UIColor(netHex:0x4CB5F5)
         navigationController!.navigationBar.tintColor = UIColor.whiteColor()
         
         
@@ -101,9 +159,10 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
             (geoPoint: PFGeoPoint?, error: NSError?) -> Void in
             if error == nil {
                 let query = PFQuery(className:"people")
-                query.whereKey("geopoint", nearGeoPoint:geoPoint!)
-                query.limit = 54
-                query.orderByDescending("num")
+                print( (self.classlist[self.receivedCellIndex - 1]))
+                print(self.receivedCellIndex)
+                query.whereKey("class", equalTo: "\(self.classlist[self.receivedCellIndex-1])").whereKey("config", notEqualTo: 3)
+                query.limit = 100
                 query.findObjectsInBackgroundWithBlock({ (objects:[PFObject]?, error) -> Void in
                     let place = objects
                     for object in place! {
@@ -112,7 +171,6 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
                         let latitude:CLLocationDegrees = hero["geopoint"]!.latitude
                         
                         let longitude:CLLocationDegrees = hero["geopoint"]!.longitude
-                        
                         
                         let latDelta:CLLocationDegrees = 10.0
                         
@@ -135,14 +193,32 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
                         
                         annotation.coordinate = coordinate
                         
-                        annotation.title = "\(hero["name"] as! String) 字\(hero["word"] as! String) "
-                        annotation.subtitle = "古:\(hero["oldlocname"] as! String), 现:\(hero["newlocname"] as! String)"
+                        annotation.title = "\(hero["name"] as! String) \(hero["word"] as! String)"
+                        
+                        self.picdic = ["\(hero["name"] as! String) \(hero["word"] as! String)":"\(hero["peoimage"])"]
+                        
+                        if(hero["oldlocname"] != nil){
+                            annotation.subtitle = "古:\(hero["oldlocname"] as! String), 现:\(hero["prov"] as! String),\(hero["city"] as! String),\(hero["district"] as! String)"
+                        }else{
+                            if (hero["district"] != nil){
+                                if hero["prov"] as! String != hero["city"]as! String{
+                                    annotation.subtitle = "\(hero["prov"] as! String),\(hero["city"] as! String),\(hero["district"] as! String)"
+                                }else{
+                                     annotation.subtitle = "\(hero["prov"] as! String),\(hero["district"] as! String)"
+                                }
+                            }else{
+                                annotation.subtitle = "\(hero["newlocname"] as! String)"
+                            }
+                        }
                         self.mmap.addAnnotation(annotation)
                         
                         
                         self.mmap.setRegion(region, animated: true)
+                        SwiftSpinner.hide()
+
                         
-                        
+                        //                        self.activityIndicator.stopAnimating()
+                        //                        UIApplication.sharedApplication().endIgnoringInteractionEvents()
                     }
                     
                 })
@@ -152,7 +228,6 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
             }
             
         }
-        
         
         
         
@@ -171,9 +246,9 @@ class bigmap: UIViewController,CLLocationManagerDelegate, MKMapViewDelegate {
     }
     
     
-            
-            
-            
+    
+    
+    
     
     
     override func didReceiveMemoryWarning() {

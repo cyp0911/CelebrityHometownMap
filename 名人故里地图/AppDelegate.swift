@@ -11,7 +11,7 @@ import CoreData
 import Parse
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
 
     var window: UIWindow?
 
@@ -19,15 +19,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         
+        //sleep(3)
         
-        
-        UITabBar.appearance().tintColor = UIColor.redColor()
+        UITabBar.appearance().tintColor = UIColor(netHex:0x4CB5F5)
         UITabBar.appearance().barTintColor = UIColor.whiteColor()
         
         
         UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.grayColor()], forState:.Normal)
         
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.redColor()], forState:.Selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor(netHex:0x4CB5F5)], forState:.Selected)
         
         
         
@@ -66,10 +66,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         
-        
+        WXApi.registerApp("wx17b2fc4527be95db") //改成你实际的AppID
+
         
         return true
     }
+    
+    
+    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
+        return WXApi.handleOpenURL(url, delegate: self)
+    }
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        return WXApi.handleOpenURL(url, delegate: self)
+    }
+
     
     
     

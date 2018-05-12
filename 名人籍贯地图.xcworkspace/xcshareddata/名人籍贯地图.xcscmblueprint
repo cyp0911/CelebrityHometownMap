@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D" : 0,
+    "83BADBC5501CE21C43EFAD0B4239602133296C18" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "98CFE081-1C3F-48D3-A759-E23AAB9E7C3E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D" : "%E5%90%8D%E4%BA%BA%E6%95%85%E9%87%8C%E5%9C%B0%E5%9B%BE\/",
+    "83BADBC5501CE21C43EFAD0B4239602133296C18" : "%E5%90%8D%E4%BA%BA%E6%95%85%E9%87%8C%E5%9C%B0%E5%9B%BE\/Eureka\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "名人籍贯地图",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "名人籍贯地图.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/cyp0911\/Famous-Map.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/xmartlabs\/Eureka.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "83BADBC5501CE21C43EFAD0B4239602133296C18"
+    }
+  ]
+}

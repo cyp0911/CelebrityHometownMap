@@ -1,0 +1,37 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0BAD6EE702E43A29C476F6A1EA8E44BDD4CC5BFA" : 0,
+    "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D" : 0,
+    "83BADBC5501CE21C43EFAD0B4239602133296C18" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "C483BCE5-956E-444D-98CA-E85D3023044B",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0BAD6EE702E43A29C476F6A1EA8E44BDD4CC5BFA" : "%E5%90%8D%E4%BA%BA%E6%95%85%E9%87%8C%E5%9C%B0%E5%9B%BE\/XLActionController\/",
+    "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D" : "%E5%90%8D%E4%BA%BA%E6%95%85%E9%87%8C%E5%9C%B0%E5%9B%BE\/",
+    "83BADBC5501CE21C43EFAD0B4239602133296C18" : "%E5%90%8D%E4%BA%BA%E6%95%85%E9%87%8C%E5%9C%B0%E5%9B%BE\/Eureka\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "名人籍贯地图",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "名人籍贯地图.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/xmartlabs\/XLActionController.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0BAD6EE702E43A29C476F6A1EA8E44BDD4CC5BFA"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/cyp0911\/Famous-Map.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "1E0C84DCAE40BCF20CEF64B9FE505299ECFA376D"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/xmartlabs\/Eureka.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "83BADBC5501CE21C43EFAD0B4239602133296C18"
+    }
+  ]
+}
